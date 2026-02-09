@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public class JsonPeliculaDao {
+public class JsonPeliculaDao implements PeliculaDao {
     private final File file;
     private final Gson gson;
     private List<Pelicula> store = new ArrayList<>();
@@ -61,6 +61,7 @@ public class JsonPeliculaDao {
         }
     }
 
+    @Override
     public Pelicula save(Pelicula pelicula) {
         if (pelicula.getId() == null) {
             pelicula.setId(idGenerator.getAndIncrement());
@@ -72,22 +73,27 @@ public class JsonPeliculaDao {
         return pelicula;
     }
 
+    @Override
     public Optional<Pelicula> findById(Long id) {
         return store.stream().filter(p -> p.getId() != null && p.getId().equals(id)).findFirst();
     }
 
+    @Override
     public List<Pelicula> findByTitulo(String titulo) {
         return store.stream().filter(p -> p.getTitulo() != null && p.getTitulo().equals(titulo)).collect(Collectors.toList());
     }
 
+    @Override
     public Optional<Pelicula> findAvailableByTitulo(String titulo) {
         return store.stream().filter(p -> p.getTitulo() != null && p.getTitulo().equals(titulo) && p.isDisponible()).findFirst();
     }
 
+    @Override
     public List<Pelicula> findAll() {
         return new ArrayList<>(store);
     }
 
+    @Override
     public boolean deleteById(Long id) {
         int before = store.size();
         store = store.stream().filter(p -> p.getId() == null || !p.getId().equals(id)).collect(Collectors.toList());

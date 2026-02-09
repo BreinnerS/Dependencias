@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public class JsonAlquilerDao {
+public class JsonAlquilerDao implements AlquilerDao {
     private final File file;
     private final Gson gson;
     private List<Alquiler> store = new ArrayList<>();
@@ -69,6 +69,7 @@ public class JsonAlquilerDao {
         }
     }
 
+    @Override
     public Alquiler save(Alquiler alquiler) {
         if (alquiler.getId() == null) {
             alquiler.setId(idGenerator.getAndIncrement());
@@ -81,22 +82,27 @@ public class JsonAlquilerDao {
         return alquiler;
     }
 
+    @Override
     public Optional<Alquiler> findById(Long id) {
         return store.stream().filter(a -> a.getId() != null && a.getId().equals(id)).findFirst();
     }
 
+    @Override
     public List<Alquiler> findAll() {
         return new ArrayList<>(store);
     }
 
+    @Override
     public List<Alquiler> findBySocio(String dni) {
         return store.stream().filter(a -> a.getSocio() != null && a.getSocio().getDni().equals(dni)).collect(Collectors.toList());
     }
 
+    @Override
     public List<Alquiler> findActiveByPelicula(String titulo) {
         return store.stream().filter(a -> a.getPelicula() != null && a.getPelicula().getTitulo().equals(titulo) && a.getFechaDevolucion() == null).collect(Collectors.toList());
     }
 
+    @Override
     public boolean deleteById(Long id) {
         int before = store.size();
         store = store.stream().filter(a -> a.getId() == null || !a.getId().equals(id)).collect(Collectors.toList());

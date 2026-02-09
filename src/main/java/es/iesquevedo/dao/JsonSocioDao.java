@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class JsonSocioDao {
+public class JsonSocioDao implements SocioDao {
     private final File file;
     private final Gson gson;
     private List<Socio> store = new ArrayList<>();
@@ -57,6 +57,7 @@ public class JsonSocioDao {
         }
     }
 
+    @Override
     public Socio save(Socio socio) {
         store = store.stream().filter(s -> !s.getDni().equals(socio.getDni())).collect(Collectors.toList());
         store.add(socio);
@@ -64,14 +65,17 @@ public class JsonSocioDao {
         return socio;
     }
 
+    @Override
     public Optional<Socio> findByDni(String dni) {
         return store.stream().filter(s -> s.getDni().equals(dni)).findFirst();
     }
 
+    @Override
     public List<Socio> findAll() {
         return new ArrayList<>(store);
     }
 
+    @Override
     public boolean deleteByDni(String dni) {
         int before = store.size();
         store = store.stream().filter(s -> !s.getDni().equals(dni)).collect(Collectors.toList());
